@@ -1,0 +1,35 @@
+{
+	"name": "df_ventas",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "ventas_csv",
+						"type": "DatasetReference"
+					},
+					"name": "source1"
+				}
+			],
+			"sinks": [],
+			"transformations": [],
+			"scriptLines": [
+				"source(output(",
+				"          cliente_id as string,",
+				"          nombre as string,",
+				"          ciudad as string,",
+				"          segmento as string,",
+				"          fecha_registro as string,",
+				"          edad as string,",
+				"          nivel_fidelidad as string,",
+				"          email as string,",
+				"          telefono as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> source1"
+			]
+		}
+	}
+}

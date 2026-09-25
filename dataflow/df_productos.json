@@ -1,0 +1,49 @@
+{
+	"name": "df_productos",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "productos_csv",
+						"type": "DatasetReference"
+					},
+					"name": "source1"
+				}
+			],
+			"sinks": [],
+			"transformations": [
+				{
+					"name": "derivedColumn1"
+				},
+				{
+					"name": "split1"
+				},
+				{
+					"name": "derivedColumn2"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          cliente_id as string,",
+				"          nombre as string,",
+				"          ciudad as string,",
+				"          segmento as string,",
+				"          fecha_registro as string,",
+				"          edad as string,",
+				"          nivel_fidelidad as string,",
+				"          email as string,",
+				"          telefono as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> source1",
+				"source1 derive() ~> derivedColumn1",
+				"derivedColumn1 split(ERROR_FUNCTION(''),",
+				"     disjoint: false) ~> split1@(, )",
+				"split1 derive() ~> derivedColumn2"
+			]
+		}
+	}
+}
