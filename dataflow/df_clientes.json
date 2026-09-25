@@ -1,0 +1,59 @@
+{
+	"name": "df_clientes",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "clientes_csv",
+						"type": "DatasetReference"
+					},
+					"name": "source1"
+				}
+			],
+			"sinks": [],
+			"transformations": [
+				{
+					"name": "derivedColumn1"
+				},
+				{
+					"name": "split1"
+				},
+				{
+					"name": "aggregate1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          cliente_id as string,",
+				"          nombre as string,",
+				"          ciudad as string,",
+				"          segmento as string,",
+				"          fecha_registro as string,",
+				"          edad as string,",
+				"          nivel_fidelidad as string,",
+				"          email as string,",
+				"          telefono as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> source1",
+				"source1 derive(nombre = initCap(lower(trim(nombre))),",
+				"          ciudad = initCap(lower(trim(ciudad))),",
+				"          segmento = initCap(lower(trim(segmento))),",
+				"          email = lower(trim(email))) ~> derivedColumn1",
+				"derivedColumn1 split(!isNull(cliente_id) && !isNull(nombre) && !isNull(ciudad) && !isNull(email) && email !='',",
+				"     disjoint: false) ~> split1@(Validos, Rechazados)",
+				"split1@Validos aggregate(nombre = first(nombre),",
+				"          ciudad = ERROR_FUNCTION(''),",
+				"          segmento = ERROR_FUNCTION(''),",
+				"          fecha_registro = ERROR_FUNCTION(''),",
+				"          edad = ERROR_FUNCTION(''),",
+				"          nivel_fidelidad = ERROR_FUNCTION(''),",
+				"          email = ERROR_FUNCTION(''),",
+				"          telefono = ERROR_FUNCTION('')) ~> aggregate1"
+			]
+		}
+	}
+}
